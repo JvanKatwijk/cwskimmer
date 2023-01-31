@@ -44,7 +44,7 @@ the second scope the spectrum of 48 bins, each with a width of
 slightly less than 100 Hz, so just over 4 K, centered around
 the tuned frequency.
 
-![cw skimmer]cw-skimmer.png?raw=true)
+![cw skimmer]/cw-skimmer.png?raw=true)
 
 Decoding is over at most 48 consecutive bins. Experience shows
 that watching 48 channels at the same time might give a slight headache,
