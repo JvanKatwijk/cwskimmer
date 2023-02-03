@@ -92,7 +92,7 @@ isEmpty(GITHASHSTRING) {
 }
 
 DESTDIR		= ./linux-bin
-CONFIG		+= sdrplay
+CONFIG		+= sdrplay-v3
 CONFIG		+= sdrplay-v2
 CONFIG		+= rtlsdr
 CONFIG		+= hackrf
@@ -156,14 +156,14 @@ sdrplay-v2 {
                            ./devices/sdrplay-handler-v2/sdrplayselect.cpp
 }
 
-sdrplay {
-        DEFINES         += HAVE_SDRPLAY
-        FORMS           += ./devices/sdrplay-handler/sdrplay-widget.ui
-        DEPENDPATH      += ./devices/sdrplay-handler
-        INCLUDEPATH     += ./devices/sdrplay-handler \
-	                   ./devices/sdrplay-handler/includes
-        HEADERS         += ./devices/sdrplay-handler/sdrplay-handler.h 
-        SOURCES         += ./devices/sdrplay-handler/sdrplay-handler.cpp 
+sdrplay-v3 {
+        DEFINES         += HAVE_SDRPLAY_V3
+        FORMS           += ./devices/sdrplay-handler-v3/sdrplay-widget-v3.ui
+        DEPENDPATH      += ./devices/sdrplay-handler-v3
+        INCLUDEPATH     += ./devices/sdrplay-handler-v3 \
+	                   ./devices/sdrplay-handler-v3/includes
+        HEADERS         += ./devices/sdrplay-handler-v3/sdrplay-handler-v3.h 
+        SOURCES         += ./devices/sdrplay-handler-v3/sdrplay-handler-v3.cpp 
 }
 
 hackrf	{

@@ -39,8 +39,8 @@
 #include        "device-handler.h"
 #include	"deviceselect.h"
 #include        "filereader.h"
-#ifdef	HAVE_SDRPLAY
-#include        "sdrplay-handler.h"
+#ifdef	HAVE_SDRPLAY_V3
+#include        "sdrplay-handler-v3.h"
 #endif
 #ifdef	HAVE_SDRPLAY_V2
 #include        "sdrplay-handler-v2.h"
@@ -53,18 +53,18 @@
 #endif
 //
 
-#define	D_SDRPLAY	"sdrplay"
+#define	D_SDRPLAY_V2	"sdrplay"
 #define	D_SDRPLAY_V3	"sdrplay-v3"
 #define	D_HACKRF	"hackrf"
 #define	D_RTLSDR	"dabstick"
 #define	D_FILEREADER	"filereader"
 static 
 const char *deviceTable [] = {
-#ifdef	HAVE_SDRPLAY
+#ifdef	HAVE_SDRPLAY_V3
 	D_SDRPLAY_V3,
 #endif
 #ifdef	HAVE_SDRPLAY_V2
-	D_SDRPLAY,
+	D_SDRPLAY_V2,
 #endif
 #ifdef	HAVE_HACKRF
 	D_HACKRF,
@@ -142,9 +142,11 @@ QString	FrequencytoString (int32_t freq) {
 	LFScope		= new SpectrumViewer (lfPlot, NR_ELEMENTS);
 
         mykeyPad                = new keyPad (this);
-        connect (freqButton, SIGNAL (clicked (void)),
-                 this, SLOT (handle_freqButton (void)));
+        connect (freqButton, SIGNAL (clicked ()),
+                 this, SLOT (handle_freqButton ()));
 
+	connect (resetButton, SIGNAL (clicked ()),
+	         this, SLOT (handle_resetButton ()));
 	connect (mouse_Inc, SIGNAL (valueChanged (int)),
 	         this, SLOT (set_mouseIncrement (int)));
 
@@ -207,7 +209,7 @@ void	RadioInterface::setStart () {
 
 	centerChannel	-> setMinimum (3);
 	centerChannel	-> setMaximum (NR_ELEMENTS - 4);
-	decodeWidth	-> setMaximum (NR_ELEMENTS / 2);
+	decodeWidth	-> setMaximum (NR_ELEMENTS);
 	if (centerBin > centerChannel -> maximum ())
 	   centerBin = centerChannel -> maximum ();;
 	if (centerBin < centerChannel -> minimum ())
@@ -480,16 +482,17 @@ void RadioInterface::closeEvent (QCloseEvent *event) {
 
 void	RadioInterface::handle_resetButton	() {
 	for (int i = 0; i < NR_ELEMENTS; i ++)	{
-	   theOutput. updateText (i, i, "");
+	   theOutput. updateText (i, 0, "");
 	}
 }
 
 void	RadioInterface::handle_decodeWidth	(int n) {
 int lowEnd_new, highEnd_new;
 
+	fprintf (stderr, "center %d, n %d\n", centerBin, n);
 	if (centerBin < n / 2)
 	   return;
-	if (centerBin >= NR_ELEMENTS - n / 2)
+	if (centerBin  + n / 2 >= NR_ELEMENTS)
 	   return;
 
 	if ((n & 01) != 0) {	// odd
@@ -548,8 +551,8 @@ deviceHandler	*RadioInterface::getDevice (const QString &s) {
 QString file;
 bool    success	= true;		// we hope it stays that way
 
-#ifdef HAVE_SDRPLAY
-	if (s == D_SDRPLAY) {
+#ifdef HAVE_SDRPLAY_V2
+	if (s == D_SDRPLAY_V2) {
 	   try {
 	      theDevice = new sdrplayHandler_v2 (this,
 	                                         &inputBuffer,

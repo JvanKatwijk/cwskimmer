@@ -37,6 +37,8 @@
 #define	CW_DOT_REPRESENTATION	'.'
 #define	CW_DASH_REPRESENTATION	'_'
 #define	CW_IF			0
+
+#define	QUEUE_LENGTH	32
 /*
  * 	The standard morse wordlength (i.e.
  * 	PARIS) is 50 bits, then for a wpm of 1,
@@ -44,16 +46,6 @@
  */
 #define	DOT_MAGIC		1200000
 
-#define	CWError		1000
-#define	CWNewLetter	1001
-#define	CWCarrierUp	1002
-#define	CWCarrierDown	1005
-#define	CWStroke	1003
-#define	CWDot		1004
-#define	CWendofword	1006
-#define	CWFailing	1007
-
-#define	CW_RECEIVE_CAPACITY	040
 class	RadioInterface;
 
 class	elementHandler: public QObject{
@@ -82,7 +74,7 @@ private:
 	int		cwFrequency;
 	std::string	cwText;
 	int		wordCount;
-	int		*buffer;
+	int		buffer [QUEUE_LENGTH];
 	int		fillerP;
 	int		emptyP;
 

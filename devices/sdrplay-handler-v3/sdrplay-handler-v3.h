@@ -36,7 +36,7 @@
 #include	"ringbuffer.h"
 #include	"fir-filters.h"
 #include	"device-handler.h"
-#include	"ui_sdrplay-widget.h"
+#include	"ui_sdrplay-widget-v3.h"
 #include	<sdrplay_api.h>
 
 class	generalCommand;
@@ -47,14 +47,15 @@ class	generalCommand;
 #define GETPROCADDRESS  dlsym
 #endif
 
-class	sdrplayHandler: public deviceHandler, public Ui_sdrplayWidget_v3 {
+class	sdrplayHandler_v3: public deviceHandler,
+	                                  public Ui_sdrplayWidget_v3 {
 Q_OBJECT
 public:
-			sdrplayHandler		(RadioInterface *,
+			sdrplayHandler_v3	(RadioInterface *,
 	                                         RingBuffer<std::complex<float>> *,
 	                                         QSettings *,
 	                                         int outputRate);
-			~sdrplayHandler	();
+			~sdrplayHandler_v3	();
 	void		setVFOFrequency		(int32_t);
 	int32_t		getVFOFrequency		();
 	bool		restartReader		();

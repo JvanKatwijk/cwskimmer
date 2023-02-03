@@ -26,7 +26,7 @@
 #include	<QDate>
 #include	<QLabel>
 #include	<QFileDialog>
-#include	"sdrplay-handler.h"
+#include	"sdrplay-handler-v3.h"
 #include	"sdrplay-commands.h"
 
 //
@@ -90,7 +90,8 @@ int16_t	bankFor_rsp (int32_t freq) {
 	return -1;
 }
 
-	sdrplayHandler::sdrplayHandler  (RadioInterface *mr,
+	sdrplayHandler_v3::
+	             sdrplayHandler_v3  (RadioInterface *mr,
 	                                 RingBuffer<std::complex<float>> *r,
 	                                 QSettings *s, 
 	                                 int outputRate):
@@ -168,7 +169,7 @@ int16_t	bankFor_rsp (int32_t freq) {
 	fprintf (stderr, "setup sdrplay v3 seems successfull\n");
 }
 
-	sdrplayHandler::~sdrplayHandler () {
+	sdrplayHandler_v3::~sdrplayHandler_v3 () {
 	threadRuns. store (false);
 	while (isRunning ())
 	   usleep (1000);
@@ -219,7 +220,7 @@ int	lnaStates (int hwVersion, int band) {
 	}
 }
 
-void	sdrplayHandler::setVFOFrequency	(int32_t newFreq) {
+void	sdrplayHandler_v3::setVFOFrequency	(int32_t newFreq) {
 set_frequencyRequest r (newFreq);
 
 	lnaGainSetting  -> setRange (0, lnaStates (hwVersion,
@@ -229,11 +230,11 @@ set_frequencyRequest r (newFreq);
 	messageHandler (&r);
 }
 
-int32_t	sdrplayHandler::getVFOFrequency () {
+int32_t	sdrplayHandler_v3::getVFOFrequency () {
 	return vfoFrequency;
 }
 
-bool	sdrplayHandler::restartReader () {
+bool	sdrplayHandler_v3::restartReader () {
 restartRequest r (vfoFrequency);
 
         if (receiverRuns. load ())
@@ -241,18 +242,18 @@ restartRequest r (vfoFrequency);
 	return messageHandler (&r);
 }
 
-void	sdrplayHandler::stopReader	() {
+void	sdrplayHandler_v3::stopReader	() {
 stopRequest r;
         if (!receiverRuns. load ())
            return;
         messageHandler (&r);
 }
 //
-void	sdrplayHandler::resetBuffer	() {
+void	sdrplayHandler_v3::resetBuffer	() {
 	_I_Buffer -> FlushRingBuffer();
 }
 
-int16_t	sdrplayHandler::bitDepth	() {
+int16_t	sdrplayHandler_v3::bitDepth	() {
 	return nrBits;
 }
 
@@ -260,26 +261,26 @@ int16_t	sdrplayHandler::bitDepth	() {
 //	Handling the GUI
 //////////////////////////////////////////////////////////////////////
 
-void	sdrplayHandler::set_lnabounds(int low, int high) {
+void	sdrplayHandler_v3::set_lnabounds(int low, int high) {
 	lnaGainSetting	-> setRange (low, high);
 	lnaGRdBDisplay	->
 	         display (get_lnaGRdB (hwVersion, lnaGainSetting -> value (),
 	                                      bankFor_rsp (vfoFrequency)));
 }
 
-void	sdrplayHandler::set_deviceName (const QString& s) {
+void	sdrplayHandler_v3::set_deviceName (const QString& s) {
 	deviceLabel	-> setText (s);
 }
 
-void	sdrplayHandler::set_serial	(const QString& s) {
+void	sdrplayHandler_v3::set_serial	(const QString& s) {
 	serialNumber	-> setText (s);
 }
 
-void	sdrplayHandler::set_apiVersion (float version) {
+void	sdrplayHandler_v3::set_apiVersion (float version) {
 	api_version	-> display (version);
 }
 
-void	sdrplayHandler::set_ifgainReduction	(int GRdB) {
+void	sdrplayHandler_v3::set_ifgainReduction	(int GRdB) {
 GRdBRequest r (GRdB);
 int	lnaState	= lnaGainSetting -> value ();
 int	bank	= bankFor_rsp (vfoFrequency);
@@ -291,7 +292,7 @@ int	bank	= bankFor_rsp (vfoFrequency);
 
 }
 
-void	sdrplayHandler::set_lnagainReduction (int lnaState) {
+void	sdrplayHandler_v3::set_lnagainReduction (int lnaState) {
 lnaRequest r (lnaState);
 int	bank	= bankFor_rsp (vfoFrequency);
 	if (!receiverRuns. load ())
@@ -301,7 +302,7 @@ int	bank	= bankFor_rsp (vfoFrequency);
 	                                         lnaState, bank));
 }
 
-void	sdrplayHandler::set_agcControl (int dummy) {
+void	sdrplayHandler_v3::set_agcControl (int dummy) {
 bool    agcMode = agcControl -> isChecked ();
 agcRequest r (agcMode, 30);
 	(void)dummy;
@@ -318,16 +319,16 @@ agcRequest r (agcMode, 30);
 	}
 }
 
-void	sdrplayHandler::set_ppmControl (int ppm) {
+void	sdrplayHandler_v3::set_ppmControl (int ppm) {
 ppmRequest r (ppm);
         messageHandler (&r);
 }
 
-void    sdrplayHandler::report_dataAvailable () {
+void    sdrplayHandler_v3::report_dataAvailable () {
         emit dataAvailable (10);
 }
 
-void	sdrplayHandler::set_antennaSelect	(const QString &s) {
+void	sdrplayHandler_v3::set_antennaSelect	(const QString &s) {
 //	messageHandler (new antennaRequest (s == "Antenna A" ? 'A' : 'B'));
 }
 
@@ -335,14 +336,14 @@ void	sdrplayHandler::set_antennaSelect	(const QString &s) {
 ////////////////////////////////////////////////////////////////////////
 //	showing data
 ////////////////////////////////////////////////////////////////////////
-void	sdrplayHandler::set_antennaSelect (bool b) {
+void	sdrplayHandler_v3::set_antennaSelect (bool b) {
 	if (b)
 	   antennaSelector		-> show	();
 	else
 	   antennaSelector		-> hide	();
 }
 
-void	sdrplayHandler::show_tunerSelector	(bool b) {
+void	sdrplayHandler_v3::show_tunerSelector	(bool b) {
 	if (b)
 	   tunerSelector	-> show	();
 	else
@@ -354,7 +355,7 @@ void	sdrplayHandler::show_tunerSelector	(bool b) {
 //	the real controller starts here
 ///////////////////////////////////////////////////////////////////////
 
-bool    sdrplayHandler::messageHandler (generalCommand *r) {
+bool    sdrplayHandler_v3::messageHandler (generalCommand *r) {
         server_queue. push (r);
 	serverjobs. release (1);
 	while (!r -> waiter. tryAcquire (1, 1000))
@@ -369,7 +370,7 @@ void    StreamACallback (short *xi, short *xq,
                          unsigned int numSamples,
 	                 unsigned int reset,
                          void *cbContext) {
-sdrplayHandler *p	= static_cast<sdrplayHandler *> (cbContext);
+sdrplayHandler_v3 *p	= static_cast<sdrplayHandler_v3 *> (cbContext);
 std::complex<float> localBuf [numSamples];
 int cnt		= 0;
 static int	sampleCnt	= 0;
@@ -415,7 +416,7 @@ void	EventCallback (sdrplay_api_EventT eventId,
                        sdrplay_api_TunerSelectT tuner,
                        sdrplay_api_EventParamsT *params,
                        void *cbContext) {
-sdrplayHandler *p	= static_cast<sdrplayHandler *> (cbContext);
+sdrplayHandler_v3 *p	= static_cast<sdrplayHandler_v3 *> (cbContext);
 	(void)tuner;
 	p -> theGain	= params -> gainParams. currGain;
 	switch (eventId) {
@@ -432,7 +433,7 @@ sdrplayHandler *p	= static_cast<sdrplayHandler *> (cbContext);
 	}
 }
 
-void	sdrplayHandler::
+void	sdrplayHandler_v3::
 	         update_PowerOverload (sdrplay_api_EventParamsT *params) {
 	sdrplay_api_Update (chosenDevice -> dev,
 	                    chosenDevice -> tuner,
@@ -447,7 +448,7 @@ void	sdrplayHandler::
 	}
 }
 
-void	sdrplayHandler::run		() {
+void	sdrplayHandler_v3::run		() {
 sdrplay_api_ErrT        err;
 sdrplay_api_DeviceT     devs [6];
 uint32_t                ndev;
@@ -853,7 +854,7 @@ closeAPI:
 //	handling the library
 /////////////////////////////////////////////////////////////////////////////
 
-HINSTANCE	sdrplayHandler::fetchLibrary () {
+HINSTANCE	sdrplayHandler_v3::fetchLibrary () {
 HINSTANCE	Handle	= nullptr;
 #ifdef	__MINGW32__
 HKEY APIkey;
@@ -904,7 +905,7 @@ ULONG APIkeyValue_length = 255;
 	return Handle;
 }
 
-void	sdrplayHandler::releaseLibrary () {
+void	sdrplayHandler_v3::releaseLibrary () {
 #ifdef __MINGW32__
         FreeLibrary (Handle);
 #else
@@ -912,7 +913,7 @@ void	sdrplayHandler::releaseLibrary () {
 #endif
 }
 
-bool	sdrplayHandler::loadFunctions () {
+bool	sdrplayHandler_v3::loadFunctions () {
 	sdrplay_api_Open	= (sdrplay_api_Open_t)
 	                 GETPROCADDRESS (Handle, "sdrplay_api_Open");
 	if ((void *)sdrplay_api_Open == nullptr) {

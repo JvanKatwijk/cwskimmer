@@ -27,7 +27,6 @@
 #include	<vector>
 #include	"radio.h"
 
-#define	QUEUE_LENGTH	32
 	elementHandler::elementHandler (RadioInterface *mr,
 	                                int ident): 
 	                             smoothenSamples (5) {
@@ -35,7 +34,6 @@
 	connect (this, SIGNAL (updateText (int, int, const QString &)),
 	         mr, SLOT (updateText (int, int, const QString &)));
 	reset	 (140700000);	// just a default
-
 }
 
 	elementHandler::~elementHandler () {}
@@ -48,13 +46,13 @@ void	elementHandler::reset	(int frequency) {
 	avg			= 0;
 	starter			= 0;
 	cwState			= MODE_IDLE;
+	cwText			= "";
 
 //
-//	a PARIS bit is 1200 milliseconds, we use a 2 msec interval
+//	a PARIS bit is 1200 milliseconds, we use a 2 msec period
 //	so a PARIS bit takes here 600 samples
 //	All length are expressed in samples
 	currentTime		= 0;
-	buffer			= new int [QUEUE_LENGTH];
 	fillerP			= 0;
 	emptyP			= 0;
 }

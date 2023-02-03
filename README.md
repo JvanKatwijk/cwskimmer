@@ -1,7 +1,7 @@
 
 
 -----------------------------------------------------------------------------
-experimental cw skimmer
+    Experimental cw skimmer
 -----------------------------------------------------------------------------
 
 I was completely fed up with tuning to cw transmissions, too late too
@@ -11,13 +11,13 @@ and try to decode what is coming in.
 
 
 So, the resulting cwskimmer computes 500 times a second a spectrum
-and from that spectrum 32 "bin"s are chosen, the bits around the
-central frequency, under the suumption that that is wjere I want
+and from that spectrum 48 "bin"s are chosen, the bins around the
+central frequency, under the assumption that that is where I want
 do decode cw messages - if any.
 
 The binwidth. i.e. the frequency distance between successive bins, is
-192000 / 2048, i.e. slightly less than 100 Hz. so, with 32 bins
-that are further being processed gives an span of just over 3 KHz.
+192000 / 2048, i.e. slightly less than 100 Hz. so, with 48 bins
+further being processed, it gives an span of just over 4 KHz.
 
 The approach per bin is straightforward, it is known that  "sample"s
 arrive with a frequency of 500 samples/second.
@@ -46,7 +46,7 @@ the tuned frequency.
 
 ![cw skimmer](/cw-skimmer.png?raw=true)
 
-Decoding is over at most 48 consecutive bins. Experience shows
+Decoding is over *at most* 48 consecutive bins. Experience shows
 that watching 48 channels at the same time might give a slight headache,
 that is why there are controls to select just a segment of these 48 bins.
 Btw, the binwidth is less than 100 Hz, so in many cases the same signal
